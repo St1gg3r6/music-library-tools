@@ -1,0 +1,30 @@
+# Virtual environment
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Raw library exports
+exports/raw/*
+!exports/raw/.gitkeep
+
+# Generated databases
+database/*.db
+database/*.sqlite
+database/*.sqlite3
+
+# Generated reports
+exports/processed/*
+!exports/processed/.gitkeep
