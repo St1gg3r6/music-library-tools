@@ -35,6 +35,7 @@ def plist_to_dict(element: Element) -> dict[str, Any]:
         raise ValueError("Expected a plist <dict> element.")
 
     result: dict[str, Any] = {}
+    unsupported_types: set[str] = set()
 
     # Iterate over the children of the <dict> element in pairs (key, value)
     for i in range(0, len(element), 2):
@@ -48,7 +49,23 @@ def plist_to_dict(element: Element) -> dict[str, Any]:
 
         assert key_text is not None
 
-        if value.tag == 'string':
-            result[key_text] = value.text
+        unsupported,converted = _convert_value(value)
 
-    return result
+        if unsupported is not None:
+            unsupported_types.add(unsupported)
+        else:
+            result[key_text] = converted
+
+    return result, unsupported_types
+
+
+def _convert_value(element: Element) -> tuple[str | None, Any]:
+    """
+    Convert a plist value element into an appropriate Python value
+    """
+
+    if element.tag == 'string':
+        return None, element.text
+
+    return element.tag, None  # Return the tag name for unsupported types
+    

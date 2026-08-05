@@ -14,3 +14,15 @@ restart the notebook kernel before re-importing.
 
 Reason:
 Python caches imported modules for the lifetime of the kernel.
+
+
+## Function Design
+
+Keep functions as simple as possible.
+
+- Prefer a single, readable implementation.
+- Do not abstract one-line conversions into separate functions.
+- Extract a private helper only when:
+  - the conversion is no longer trivial,
+  - the logic is reused,
+  - or readability is improved.
