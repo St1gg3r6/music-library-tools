@@ -52,3 +52,20 @@ false	bool
 date	datetime.datetime
 dict	dict (recursive)
 array	list (eventually)
+
+
+## Discovery 006 – Track Value Types
+
+Parsed all 19,030 track dictionaries.
+
+Supported types:
+- string
+- integer
+- true
+
+The only unsupported scalar value type encountered was `date`.
+
+Occurrences:
+- date: 19,030
+
+This indicates every track contains exactly one date value in the exported XML.

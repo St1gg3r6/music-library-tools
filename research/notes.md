@@ -26,3 +26,10 @@ Keep functions as simple as possible.
   - the conversion is no longer trivial,
   - the logic is reused,
   - or readability is improved.
+
+## Dates
+
+Dates are preserved as ISO 8601 strings.
+The parser aims to preserve the original plist representation where practical. Consumers such as Pandas or analysis code are responsible for converting date strings to datetime objects when required.
+
+Convert only when the conversion is unambiguous and universally useful. Otherwise, preserve the original representation.

@@ -29,8 +29,6 @@ def plist_to_dict(element: Element) -> dict[str, Any]:
         If the supplied element is not a plist dictionary.
     """
 
-    print("Function has been called")
-
     if element.tag != PLIST_DICT_TAG:
         raise ValueError("Expected a plist <dict> element.")
 
@@ -64,8 +62,17 @@ def _convert_value(element: Element) -> tuple[str | None, Any]:
     Convert a plist value element into an appropriate Python value
     """
 
-    if element.tag == 'string':
-        return None, element.text
-
+    match element.tag:
+        case 'string':
+            return None, element.text
+        case 'integer':
+            assert element.text is not None
+            return None, int(element.text)
+        case 'true':
+            return None, True
+        case 'date':
+            assert element.text is not None
+            return None, element.text  # Return the date string as-is
+        
     return element.tag, None  # Return the tag name for unsupported types
     
