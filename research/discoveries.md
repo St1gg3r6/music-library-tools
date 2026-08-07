@@ -69,3 +69,29 @@ Occurrences:
 - date: 19,030
 
 This indicates every track contains exactly one date value in the exported XML.
+
+## Discovery 007 – Effect of "Add to Library" on a Removed Track
+
+Date observed: 2026-08-06
+
+Starting state:
+- Track had Cloud Status = Removed.
+- A duplicate "Waiting" or "Matched" instance of the track already existed.
+- Original track contained historical metadata (play count, rating, etc.).
+
+Action:
+- Right-clicked the Removed track.
+- Selected "Add to Library".
+
+Observed behaviour:
+- Cloud Status changed almost immediately to Matched.
+- The duplicate library entry disappeared.
+- Only one track remained in the Music app.
+- Historical metadata (play count, rating, etc.) was lost.
+- Music references the original media file.
+- A duplicate physical file with a "1" suffix remains on disk.
+
+Questions:
+- Was the original library entry replaced by the duplicate?
+- Did Apple retain the original Persistent ID?
+- Does the library XML still contain the historical metadata?
