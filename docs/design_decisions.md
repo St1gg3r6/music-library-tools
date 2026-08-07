@@ -23,3 +23,8 @@ of the complete XML schema.
 
 Once parser development is complete, unsupported types should
 be considered exceptional.
+
+
+## Matching Principle 001
+
+Candidate track identity should be based on stable musical metadata (Name, Artist, Album) rather than file-specific metadata (Location, Persistent ID, Track ID) or potentially mutable metadata (Total Time).

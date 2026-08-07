@@ -95,3 +95,24 @@ Questions:
 - Was the original library entry replaced by the duplicate?
 - Did Apple retain the original Persistent ID?
 - Does the library XML still contain the historical metadata?
+
+
+# Proven Relationships
+
+PR001
+
+Track Type = File
+⇔
+Location exists
+
+
+PR002
+
+Matched field only appears when True.
+False values are omitted from the XML.
+
+### Observation 003
+
+Kind and Matched describe different properties
+
+- `Comments` requires later normalisation but should remain unchanged in the source library until metadata restoration is complete.
