@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from music_library_tools.plist import plist_to_dict
+import pandas as pd
 
 
 def load_library(filepath: str) -> ET.Element:
@@ -67,3 +68,19 @@ def parse_dict_elements(section: ET.Element) -> list[dict]:
         parsed_section.append(parsed_element)
 
     return parsed_section
+
+
+def library_export_to_dataframe(filepath: str) -> pd.DataFrame:
+    """
+    Load a music library from an XML file and convert the Tracks elements to a pandas DataFrame.
+
+    Args:
+        filepath (str): The path to the XML file.
+
+    Returns:
+        DataFrame: A pandas DataFrame containing the music library data.
+    """
+
+    library = load_library(filepath)
+    tracks = parse_dict_elements(get_library_section(library, "Tracks"))
+    return pd.DataFrame(tracks)

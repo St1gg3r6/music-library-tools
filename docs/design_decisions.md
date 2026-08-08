@@ -28,3 +28,5 @@ be considered exceptional.
 ## Matching Principle 001
 
 Candidate track identity should be based on stable musical metadata (Name, Artist, Album) rather than file-specific metadata (Location, Persistent ID, Track ID) or potentially mutable metadata (Total Time).
+
+A matching algorithm should prioritise stable musical metadata (Name, Artist, Album) and treat file-specific properties such as duration, file size and bitrate as descriptive rather than identifying.
