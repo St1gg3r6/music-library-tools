@@ -3,15 +3,23 @@ from music_library_tools.plist import plist_to_dict
 import pandas as pd
 
 
+IDENTITY_FIELDS = [
+    "Artist",
+    "Album",
+    "Track Number",
+    "Name",
+]
+
+
 def load_library(filepath: str) -> ET.Element:
     """
     Load a music library from an XML file.
 
     Args:
-        filepath (str): The path to the XML file.
+        filepath (str): The path to the XML export file.
 
     Returns:
-        Element: An xml representation of the music library.
+        Element: The root <dict> element of the music library.
     """
 
     tree = ET.parse(filepath)
@@ -26,10 +34,10 @@ def load_library(filepath: str) -> ET.Element:
 
 def get_library_section(library: ET.Element, section_name: str) -> ET.Element:
     """
-    Get a specific section of the music library.
+    Get a named, top-level section of the library.
 
     Args:
-        library (Element): An xml representation of the music library.
+        library (Element): The library <dict> element.
         section_name (str): The name of the section to retrieve.
 
     Returns:
@@ -38,17 +46,41 @@ def get_library_section(library: ET.Element, section_name: str) -> ET.Element:
 
     for i in range(0, len(library), 2):
         if library[i].text == section_name:
-            section = library[i + 1]
-            break
-    else:
-        raise KeyError(f"Section '{section_name}' not found in library.")
+            return library[i + 1]
 
-    return section
+    raise KeyError(f"Section '{section_name}' not found in library.")
+
+
+def _parse_dict_sequence(elements: list[ET.Element]) -> list[dict]:
+    """
+    Parse a sequence of plist <dict> elements.
+    
+    Args:
+        elements: A list of <dict> elements.
+        
+    Returns:
+        A list of Python dictionaries.
+    """
+
+    parsed = []
+    unsupported_types = []
+
+    for element in elements:
+
+        assert element.tag == 'dict'
+
+        parsed_element, unsupported = plist_to_dict(element)
+
+        # assert not unsupported
+        # unsupported_types.append(unsupported)
+        parsed.append(parsed_element)
+
+    return parsed #, unsupported_types
 
 
 def parse_dict_elements(section: ET.Element) -> list[dict]:
     """
-        Parse a plist section whose values are <dict> elements.
+        Parse a plist <dict> whose values are <dict> elements.
 
         Args:
             section: A plist <dict> containing alternating <key>/<dict> children.
@@ -56,18 +88,28 @@ def parse_dict_elements(section: ET.Element) -> list[dict]:
         Returns:
             A list of parsed Python dictionaries.
     """
-    
-    parsed_section = []
 
-    for i in range(0, len(section), 2):
-        element = section[i + 1]
-        parsed_element, unsupported = plist_to_dict(element)
+    assert section.tag == 'dict'
 
-        assert not unsupported
+    elements = [section[i + 1] for i in range(0, len(section), 2)]
 
-        parsed_section.append(parsed_element)
+    return _parse_dict_sequence(elements)
 
-    return parsed_section
+
+def parse_array_elements(section: ET.Element) -> list[dict]:
+    """
+    Parse a plist <array> whose children are <dict> elements.
+
+    Args:
+        section: A plist <array>
+
+    Returns:
+        A list of parsed Python dictionaries.
+    """
+
+    assert section.tag == 'array'
+
+    return _parse_dict_sequence(list(section))
 
 
 def library_export_to_dataframe(filepath: str) -> pd.DataFrame:
@@ -83,4 +125,44 @@ def library_export_to_dataframe(filepath: str) -> pd.DataFrame:
 
     library = load_library(filepath)
     tracks = parse_dict_elements(get_library_section(library, "Tracks"))
-    return pd.DataFrame(tracks)
+
+    df = pd.DataFrame(tracks).sort_values(by='Track ID')
+
+    df['Identity Count'] = df.groupby(IDENTITY_FIELDS)['Track ID'].transform('count')
+    df['Max Track ID'] = df.groupby(IDENTITY_FIELDS)['Track ID'].transform('max')
+    df['Min Track ID'] = df.groupby(IDENTITY_FIELDS)['Track ID'].transform('min')
+
+    return df
+
+
+def get_playlist(playlists: list[dict], name: str) -> dict | None:
+    """
+    Return the first playlist with the given name.
+
+    Args:
+        playlists: Parsed playlist collection.
+        name: Name of the playlist to find.
+
+    Returns:
+        The first playlist dictionary with the given name, or None if not found.
+    """
+
+    for playlist in playlists:
+        if playlist['Name'] == name:
+            return playlist
+
+    return None
+
+
+def get_playlist_track_ids(playlist: dict) -> list[int]:
+    """
+    Return the track IDs from a playlist.
+
+    Args:
+        playlist: Parsed playlist dictionary.
+
+    Returns:
+        A list of track IDs from the playlist.
+    """
+
+    return [item['Track ID'] for item in playlist.get('Playlist Items', [])]

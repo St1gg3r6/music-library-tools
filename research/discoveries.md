@@ -111,6 +111,47 @@ Right-click → **Add to Library**
 
 This behaviour became one of the primary motivations for the investigation.
 
+## Discovery 008 – Replacement Behaviour Appears to Be Track-Based
+
+### Evidence
+
+Comparison of albums shows no consistent album-level behaviour.
+
+Examples include:
+
+- Entire albums where every track has a replacement candidate.
+- Albums where no tracks have replacement candidates.
+- Albums where only a subset of tracks have replacement candidates.
+
+Examples:
+
+| Album | Tracks | Replacement Candidates |
+|-------|-------:|-----------------------:|
+| Aerosmith – Get A Grip | 15 | 15 |
+| Cream – The Very Best Of Cream | 20 | 16 |
+| Athlete – Beyond the Neighbourhood | 14 | 3 |
+| Black Mountain – IV | 10 | 0 |
+
+### Additional Context
+
+The original problem appears to have been triggered when tracks were manually removed from the shared Apple Music library using another device.
+
+Those removals would have been driven by listening preferences rather than album structure, meaning the affected tracks were effectively selected independently across the library.
+
+### Interpretation
+
+The evidence is consistent with Apple processing tracks independently rather than treating albums as atomic units during matching and synchronisation.
+
+The random distribution of affected tracks throughout the library is therefore consistent with both:
+
+- the original manual removals being effectively random from the perspective of the library, and
+- Apple's subsequent processing operating on individual tracks.
+
+
+## Discovery 009 – Smart Playlist definitions are stored as Base64 encoded binary data.
+
+The Music XML export stores the Smart Info and Smart Criteria fields as <data> elements rather than structured XML. The parser preserves these values unchanged. Interpretation of their contents is outside the scope of the plist parser.
+
 ---
 
 # Proven Relationships

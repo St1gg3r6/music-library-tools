@@ -33,3 +33,8 @@ Dates are preserved as ISO 8601 strings.
 The parser aims to preserve the original plist representation where practical. Consumers such as Pandas or analysis code are responsible for converting date strings to datetime objects when required.
 
 Convert only when the conversion is unambiguous and universally useful. Otherwise, preserve the original representation.
+
+
+## Future Enhancement – Smart Playlist Preservation
+
+Preserve Smart Playlist definitions from the library export, with the long-term goal of decoding Apple's binary Smart Criteria format to enable recreation of Smart Playlists without relying on .musiclibrary backups.
