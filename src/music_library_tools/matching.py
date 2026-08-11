@@ -1,4 +1,6 @@
 import pandas as pd
+from music_library_tools.library import IDENTITY_FIELDS
+
 
 def find_candidate_originals(track: pd.Series, search_df: pd.DataFrame,) -> pd.DataFrame:
     """
@@ -25,12 +27,7 @@ def find_candidate_originals(track: pd.Series, search_df: pd.DataFrame,) -> pd.D
     """
 
     # Define the metadata fields to use for candidate selection
-    identity_fields = [
-        "Artist",
-        "Album",
-        "Name",
-        "Track Number"
-    ]
+    identity_fields = IDENTITY_FIELDS
 
     # Create a boolean mask for candidate matches
     mask = pd.Series(True, index=search_df.index)

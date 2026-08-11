@@ -10,6 +10,20 @@ IDENTITY_FIELDS = [
     "Name",
 ]
 
+CLOUD_STATUS_PLAYLISTS = {
+    'apple_music': 'Cloud Status - Apple Music',
+    'duplicate': 'Cloud Status - Duplicate',
+    'error': 'Cloud Status - Error',
+    'ineligible': 'Cloud Status - Ineligible',
+    'matched': 'Cloud Status - Matched',
+    'no_longer_available': 'Cloud Status - No Longer Available',
+    'not_uploaded': 'Cloud Status - Not Uploaded',
+    'purchased': 'Cloud Status - Purchased',
+    'removed': 'Cloud Status - Removed',
+    'uploaded': 'Cloud Status - Uploaded',
+    'waiting': 'Cloud Status - Waiting'
+}
+
 
 def load_library(filepath: str) -> ET.Element:
     """
@@ -127,7 +141,8 @@ def library_export_to_dataframe(filepath: str) -> pd.DataFrame:
     tracks = parse_dict_elements(get_library_section(library, "Tracks"))
 
     df = pd.DataFrame(tracks).sort_values(by='Track ID')
-
+    df = df[df['Playlist Only'].fillna(False) == False]  # Exclude playlist-only tracks
+    
     df['Identity Count'] = df.groupby(IDENTITY_FIELDS)['Track ID'].transform('count')
     df['Max Track ID'] = df.groupby(IDENTITY_FIELDS)['Track ID'].transform('max')
     df['Min Track ID'] = df.groupby(IDENTITY_FIELDS)['Track ID'].transform('min')
@@ -166,3 +181,23 @@ def get_playlist_track_ids(playlist: dict) -> list[int]:
     """
 
     return [item['Track ID'] for item in playlist.get('Playlist Items', [])]
+
+
+def get_track_by_id(df: pd.DataFrame, track_id: int) -> pd.Series | None:
+    """
+    Return the track with the given Track ID.
+
+    Args:
+        df: DataFrame containing the music library data.
+        track_id: The Track ID to find.
+
+    Returns:
+        A pandas Series representing the track, or None if not found.
+    """
+
+    track = df.loc[df['Track ID'] == track_id]
+
+    if not track.empty:
+        return track.iloc[0]
+
+    return None
